@@ -1,0 +1,26 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+# Arquivos temporários e de backup
+*~
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.temp
+
+# Arquivos gerados pela IDE (ex. Visual Studio Code)
+.vscode/
+.idea/
+
+# Arquivos gerados pelo sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos e diretórios específicos do Flask
+instance/
+.webassets-cache
