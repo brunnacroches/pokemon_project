@@ -16,3 +16,5 @@ class Pokemon(Base):
                 f' attack_force={self.attack_force})\n'
                 f' attack_value={self.attack_value}\n'
     )
+
+    __table_args__ = {"extend_existing": True}
