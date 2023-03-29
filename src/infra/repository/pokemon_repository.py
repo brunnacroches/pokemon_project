@@ -62,9 +62,9 @@ class PokemonRepository:
             try:
                 pokemon = db.session.query(Pokemon).filter(
                     Pokemon.name_pokemon == name_pokemon
-                ).one_or_none()
-                print(f"find_by_name result for {name_pokemon}: {pokemon}")
+                ).first()
                 return pokemon
             except Exception as exception:
                 db.session.rollback()
                 raise exception
+

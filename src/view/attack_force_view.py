@@ -1,7 +1,7 @@
 from cerberus import Validator
+import traceback
 from src.validators.validator_attack_force import validate_attack_force_query_params
 from src.controllers.attack_force_controller import AtackForceController
-# from src.controllers.attack_force_controller import
 from src.error_handling.validation_error import ValidationError
 
 class AttackForceViews:
@@ -22,15 +22,7 @@ class AttackForceViews:
 
             # Cria uma instância do controlador de pesquisa de combinação e verifica a força dos Pokemons
             attack_force_controller = AtackForceController()
-            attack_result = attack_force_controller.attack_combat(pokemon_first, pokemon_second)
-
-            # Verifica se a mensagem está presente no resultado da pesquisa e se não é None
-            if "message" not in attack_result or attack_result["message"] is None:
-                return {
-                    "status_code": 500,
-                    "data": None,
-                    "error": "Invalid response from attack_combat method."
-                }
+            attack_result = attack_force_controller.calculate_attack_force(pokemon_first, pokemon_second)
 
             # Retorna a resposta bem-sucedida com os dados da pesquisa do combate
             return {
@@ -41,5 +33,6 @@ class AttackForceViews:
             
         except Exception as e:
             # Registre o erro e retorne um dicionário com uma mensagem de erro e um código de status de erro
+            traceback.print_exc()
             print(f"Erro ao calcular o combate entre os Pokemons: {e}")
-            return {"data": {"error": "Ocorreu um erro ao calcular o combate entra os Pokemons."}, "status_code": 500}    
+            return {"data": {"error": "Ocorreu um erro ao calcular o combate entre os Pokemons."}, "status_code": 500}  
