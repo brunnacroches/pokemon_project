@@ -9,10 +9,10 @@ class Pokemon(Base):
     attack_force =  Column(String(100), nullable=False)
     attack_value =  Column(Integer, nullable=False)
 
-    def to_dict(self):
-        return {
-            "id_pokemon": self.id_pokemon,
-            "name_pokemon": self.name_pokemon,
-            "attack_force": self.attack_force,
-            "attack_value": self.attack_value,
-        }
+    def __repr__(self):
+        return (f' Pokemon(\n'
+                f' id_pokemon={self.id_pokemon},\n' 
+                f' name_pokemon={self.name_pokemon},\n'
+                f' attack_force={self.attack_force})\n'
+                f' attack_value={self.attack_value}\n'
+    )

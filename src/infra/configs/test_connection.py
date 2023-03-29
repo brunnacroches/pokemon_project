@@ -1,5 +1,5 @@
 from src.infra.configs.connection import DBConnectionHandler
-from src.infra.entities import Pokemon
+from pokemon_project.src.infra.entities.pokemon_entities import Pokemon
 
 def test_db_connection():
     connection_handler = DBConnectionHandler()
