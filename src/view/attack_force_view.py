@@ -1,16 +1,17 @@
-from cerberus import Validator
 import traceback
 from src.validators.validator_attack_force import validate_attack_force_query_params
-from src.controllers.attack_force_controller import AtackForceController
 from src.error_handling.validation_error import ValidationError
 
 class AttackForceViews:
+    def __init__(self, controller) -> None:
+        self.__controller = controller
+
     # Método para tratar a requisição da rota e retornar a resposta da pesquisa de combinação de signos
     def attack_force_views(self, request_args):
         try:
             # Converte os argumentos da requisição em um dicionário
             query_params = dict(request_args)
-            
+
             # Valida os parâmetros de consulta recebidos
             validation_response = validate_attack_force_query_params(query_params)
             if not validation_response["is_valid"]:
@@ -21,8 +22,7 @@ class AttackForceViews:
             pokemon_second = request_args.get("pokemon_second")
 
             # Cria uma instância do controlador de pesquisa de combinação e verifica a força dos Pokemons
-            attack_force_controller = AtackForceController()
-            attack_result = attack_force_controller.calculate_attack_force(pokemon_first, pokemon_second)
+            attack_result = self.__controller.calculate_attack_force(pokemon_first, pokemon_second)
 
             # Retorna a resposta bem-sucedida com os dados da pesquisa do combate
             return {

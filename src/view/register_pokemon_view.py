@@ -1,10 +1,11 @@
-from cerberus import Validator
 from src.validators.validate_register_pokemon import validate_register_pokemon_request_body
 from pokemon_project.src.validators.validate_register_pokemon import validate_register_pokemon_request_body
-from src.controllers.register_pokemon_controller import RegisterPokemonController
 from src.error_handling.validation_error import ValidationError
 
 class RegisterPokemonViews:
+    def __init__(self, controller) -> None:
+        self.__controller = controller
+    
     def register_pokemon_view(self, request):
         try:
             validation_response = validate_register_pokemon_request_body(request.json)
@@ -17,8 +18,7 @@ class RegisterPokemonViews:
             attack_value = body["attack_value"]
 
             # chama o controller para criar o registro
-            register_pokemon_controller = RegisterPokemonController()
-            register_pokemon_controller.register_pokemon_controller(name_pokemon, attack_force, attack_value)
+            self.__controller.register_pokemon_controller(name_pokemon, attack_force, attack_value)
 
             return {
                 "status_code": 200,

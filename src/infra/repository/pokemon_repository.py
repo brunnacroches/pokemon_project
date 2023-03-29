@@ -1,11 +1,12 @@
+from typing import Union
 from src.infra.entities.pokemon_entities import Pokemon
 
 class PokemonRepository:
     def __init__(self, ConnectionHandler) -> None:
-        self.__ConnectionHandler = ConnectionHandler
+        self._connectionHandler = ConnectionHandler
 
     def select(self):
-        with self.__ConnectionHandler() as db:
+        with self._connectionHandler() as db:
             try:
                 data = db.session.query(Pokemon).all()
                 return data
@@ -14,7 +15,7 @@ class PokemonRepository:
                 raise exception
 
     def insert(self, name_pokemon: str, attack_force: str, attack_value: int) -> Pokemon:
-        with self.__ConnectionHandler() as db:
+        with self._connectionHandler() as db:
             try:
                 data_insert = Pokemon(
                     name_pokemon=name_pokemon,
@@ -29,7 +30,7 @@ class PokemonRepository:
                 raise exception
 
     def delete(self, id_pokemon: int):
-        with self.__ConnectionHandler() as db:
+        with self._connectionHandler() as db:
             try:
                 deleted_rows = db.session.query(Pokemon).filter(
                     Pokemon.id_pokemon == id_pokemon
@@ -44,7 +45,7 @@ class PokemonRepository:
                 raise exception
 
     def update(self, id_pokemon:int, new_id_pokemon: int):
-        with self.__ConnectionHandler() as db:
+        with self._connectionHandler() as db:
             try:
                 db.session.query(Pokemon).filter(
                     Pokemon.id_pokemon == id_pokemon
@@ -57,8 +58,8 @@ class PokemonRepository:
                 db.session.rollback()
                 raise exception
 
-    def find_by_name(self, name_pokemon: str) -> Pokemon:
-        with self.__ConnectionHandler() as db:
+    def find_by_name(self, name_pokemon: str) -> Union[Pokemon, None]:
+        with self._connectionHandler() as db:
             try:
                 pokemon = db.session.query(Pokemon).filter(
                     Pokemon.name_pokemon == name_pokemon

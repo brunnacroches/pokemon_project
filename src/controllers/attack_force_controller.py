@@ -1,12 +1,8 @@
-from src.infra.repository.pokemon_repository import PokemonRepository
-from src.infra.configs.connection import DBConnectionHandler
+class AttackForceController:
+    def __init__(self, model):
+        self.db_repository = model
 
-
-class AtackForceController:
-    def __init__(self):
-        self.db_repository = PokemonRepository(DBConnectionHandler)
-
-    def calculate_attack_force(self, pokemon_first, pokemon_second):
+    def calculate_attack_force(self, pokemon_first: str, pokemon_second: str):
             pokemon_1 = self.db_repository.find_by_name(pokemon_first)
             pokemon_2 = self.db_repository.find_by_name(pokemon_second)
             if pokemon_1 and pokemon_2:
