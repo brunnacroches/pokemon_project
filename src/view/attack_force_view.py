@@ -1,6 +1,5 @@
-import traceback
 from src.validators.validator_attack_force import validate_attack_force_query_params
-from src.error_handling.validation_error import ValidationError
+from src.error_handling.validation_error_view import ViewError
 
 class AttackForceViews:
     def __init__(self, controller) -> None:
@@ -13,9 +12,7 @@ class AttackForceViews:
             query_params = dict(request_args)
 
             # Valida os parâmetros de consulta recebidos
-            validation_response = validate_attack_force_query_params(query_params)
-            if not validation_response["is_valid"]:
-                raise ValidationError("Invalid query params: {}".format(validation_response["error"]))
+            validate_attack_force_query_params(query_params)
 
             # Obtém os nomes dos pokemons a partir dos parâmetros de consulta
             pokemon_first = request_args.get("pokemon_first")
@@ -31,8 +28,6 @@ class AttackForceViews:
                 "success": True
             }
             
-        except Exception as e:
-            # Registre o erro e retorne um dicionário com uma mensagem de erro e um código de status de erro
-            traceback.print_exc()
-            print(f"Erro ao calcular o combate entre os Pokemons: {e}")
-            return {"data": {"error": "Ocorreu um erro ao calcular o combate entre os Pokemons."}, "status_code": 500}  
+        except Exception as exception:
+            response = ViewError.handler_error(exception, error_type="attack")
+            return response

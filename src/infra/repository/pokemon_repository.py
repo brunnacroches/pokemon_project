@@ -5,15 +5,6 @@ class PokemonRepository:
     def __init__(self, ConnectionHandler) -> None:
         self._connectionHandler = ConnectionHandler
 
-    def select(self):
-        with self._connectionHandler() as db:
-            try:
-                data = db.session.query(Pokemon).all()
-                return data
-            except Exception as exception:
-                db.session.rollback()
-                raise exception
-
     def insert(self, name_pokemon: str, attack_force: str, attack_value: int) -> Pokemon:
         with self._connectionHandler() as db:
             try:
@@ -25,6 +16,15 @@ class PokemonRepository:
                 db.session.add(data_insert) 
                 db.session.commit()
                 return data_insert
+            except Exception as exception:
+                db.session.rollback()
+                raise exception
+
+    def select(self):
+        with self._connectionHandler() as db:
+            try:
+                data = db.session.query(Pokemon).all()
+                return data
             except Exception as exception:
                 db.session.rollback()
                 raise exception

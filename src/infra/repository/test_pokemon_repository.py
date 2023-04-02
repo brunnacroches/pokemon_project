@@ -1,73 +1,176 @@
-import pytest
-from mock_alchemy.mocking import UnifiedAlchemyMagicMock
-from unittest import mock
+from faker import Faker
+from src.infra.configs.connection import DBConnectionHandler
 from src.infra.entities.pokemon_entities import Pokemon
 from src.infra.repository.pokemon_repository import PokemonRepository
-import os
+from sqlalchemy.orm import Session, session
 
-os.environ["SQLALCHEMY_WARN_20"] = "1"
+faker = Faker()
+pokemon_repository = PokemonRepository(DBConnectionHandler)
+db_connection_handler = DBConnectionHandler()
 
-class ConnectionHandlerMock:
-    def __init__(self) -> None:
-        self.session = UnifiedAlchemyMagicMock(
-            data=[
-                (
-                    [
-                        mock.call.query(Pokemon),  # condição para acessar esses dados
-                    ],
-                    [Pokemon(id_pokemon=1234, name_pokemon="Fyredra", attack_force="SolarBlast")]
-                )
-            ]
-        )
+def test_insert_pokemon():
+    """Should insert a Pokemon in Pokemon table and return it"""
 
-    # Método especial __enter__ é chamado ao entrar em um bloco 'with'
-    def __enter__(self):
-        return self
+    name_pokemon = faker.name()
+    attack_force = "Electric"
+    attack_value = faker.random_number(digits=3)
 
-    # Método especial __exit__ é chamado ao sair do bloco 'with'
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        # Fechando a sessão atual
-        self.session.close()
+    # Inserir o novo Pokémon
+    new_pokemon = pokemon_repository.insert(name_pokemon, attack_force, attack_value)
 
-    def __call__(self):
-        return self
-        # Fechando a sessão atual
-        self.session.close()
+    # Obter o engine e criar uma sessão separada para a consulta de teste
+    engine = db_connection_handler.get_engine()
+    test_session = Session(bind=engine)
 
+    # Adicionar o objeto new_pokemon à sessão de teste e sincronizar com o banco de dados
+    test_session.add(new_pokemon)
+    test_session.flush()
 
-def test_select():
-    pokemon_repository = PokemonRepository(ConnectionHandlerMock)
-    response = pokemon_repository.select()
-    print()
-    print(response)
-    assert isinstance(response, list)
-    assert isinstance(response[0], Pokemon)
-    assert response[0].name_pokemon == "Fyredra"
+    # Consultar o Pokémon inserido
+    query_pokemon = test_session.query(Pokemon).filter_by(id_pokemon=new_pokemon.id_pokemon).first()
 
-def test_insert():
-    pokemon_repository = PokemonRepository(ConnectionHandlerMock)
-    response = pokemon_repository.insert("Aqualynx", "SlashingWind", 9)
-    print()
-    print(response)
-    assert isinstance(response, Pokemon)
+    assert new_pokemon.id_pokemon == query_pokemon.id_pokemon
+    assert new_pokemon.name_pokemon == query_pokemon.name_pokemon
+    assert new_pokemon.attack_force == query_pokemon.attack_force
+    assert new_pokemon.attack_value == query_pokemon.attack_value
 
-def test_delete():
-    pokemon_repository = PokemonRepository(ConnectionHandlerMock)
-    response = pokemon_repository.delete(1234)
-    print()
-    print(response)
-    assert response == 1234
+    # Remover o Pokémon e fechar a sessão de teste
+    test_session.delete(new_pokemon)
+    test_session.commit()
+    test_session.close()
 
-def test_update():
-    pokemon_repository = PokemonRepository(ConnectionHandlerMock)
-    response = pokemon_repository.update(1234, 4321)
-    print()
-    print(response)
-    assert response == 4321
+def test_select_pokemon():
+    """Should select all Pokemon from the Pokemon table"""
 
-def test_find_by_name():
-    pokemon_repository = PokemonRepository(ConnectionHandlerMock)
-    response = pokemon_repository.find_by_name("Fyredra")
-    print()
-    print(response)
-    assert response.name_pokemon == "Fyredra"
+    # Inserir 2 novos Pokémon
+    name_pokemon_1 = faker.name()
+    attack_force_1 = "Electric"
+    attack_value_1 = faker.random_number(digits=3)
+    new_pokemon_1 = pokemon_repository.insert(name_pokemon_1, attack_force_1, attack_value_1)
+
+    name_pokemon_2 = faker.name()
+    attack_force_2 = "Water"
+    attack_value_2 = faker.random_number(digits=3)
+    new_pokemon_2 = pokemon_repository.insert(name_pokemon_2, attack_force_2, attack_value_2)
+
+    # Obter o engine e criar uma sessão separada para a consulta de teste
+    engine = db_connection_handler.get_engine()
+    test_session = Session(bind=engine)
+
+    # Adicionar os objetos new_pokemon à sessão de teste e sincronizar com o banco de dados
+    test_session.add(new_pokemon_1)
+    test_session.add(new_pokemon_2)
+    test_session.flush()
+
+    # Selecionar todos os Pokémon
+    all_pokemon = pokemon_repository.select()
+
+    # Verificar se os dois novos Pokémon estão na lista de todos os Pokémon
+    assert any(pokemon.id_pokemon == new_pokemon_1.id_pokemon for pokemon in all_pokemon)
+    assert any(pokemon.id_pokemon == new_pokemon_2.id_pokemon for pokemon in all_pokemon)
+
+    # Remover os Pokémon inseridos e fechar a sessão de teste
+    test_session.delete(new_pokemon_1)
+    test_session.delete(new_pokemon_2)
+    test_session.commit()
+    test_session.close()
+
+def test_delete_pokemon():
+    """Should delete a Pokemon from the Pokemon table by id"""
+
+    # Inserir um novo Pokémon
+    name_pokemon = faker.name()
+    attack_force = "Electric"
+    attack_value = faker.random_number(digits=3)
+    new_pokemon = pokemon_repository.insert(name_pokemon, attack_force, attack_value)
+
+    # Obter o engine e criar uma sessão separada para a consulta de teste
+    engine = db_connection_handler.get_engine()
+    test_session = Session(bind=engine)
+
+    # Adicionar o objeto new_pokemon à sessão de teste e sincronizar com o banco de dados
+    test_session.add(new_pokemon)
+    test_session.flush()
+
+    # Consultar o Pokémon inserido
+    inserted_pokemon = test_session.query(Pokemon).filter_by(id_pokemon=new_pokemon.id_pokemon).first()
+
+    # Deletar o Pokémon inserido
+    deleted_pokemon_id = pokemon_repository.delete(inserted_pokemon.id_pokemon)
+
+    # Verificar se o Pokémon foi deletado corretamente
+    assert deleted_pokemon_id == inserted_pokemon.id_pokemon
+
+    # Fechar a sessão de teste
+    test_session.close()
+
+    # Criar uma nova sessão de teste para consultar o
+
+def test_update_pokemon():
+    """Should update a Pokemon's id_pokemon in the Pokemon table"""
+
+    # Inserir um novo Pokémon
+    name_pokemon = faker.name()
+    attack_force = "Electric"
+    attack_value = faker.random_number(digits=3)
+    new_pokemon = pokemon_repository.insert(name_pokemon, attack_force, attack_value)
+
+    # Obter o engine e criar uma sessão separada para a consulta de teste
+    engine = db_connection_handler.get_engine()
+    test_session = Session(bind=engine)
+
+    # Adicionar o objeto new_pokemon à sessão de teste e sincronizar com o banco de dados
+    test_session.add(new_pokemon)
+    test_session.flush()
+
+    # Consultar o Pokémon inserido
+    inserted_pokemon = test_session.query(Pokemon).filter_by(id_pokemon=new_pokemon.id_pokemon).first()
+
+    # Atualizar o id_pokemon do Pokémon inserido
+    new_id_pokemon = inserted_pokemon.id_pokemon + 100
+    updated_pokemon_id = pokemon_repository.update(inserted_pokemon.id_pokemon, new_id_pokemon)
+
+    # Confirmar as alterações no banco de dados
+    test_session.commit()
+
+    # Verificar se o id_pokemon foi atualizado corretamente
+    assert updated_pokemon_id == new_id_pokemon
+
+    # Consultar o Pokémon atualizado
+    updated_pokemon = test_session.query(Pokemon).filter_by(id_pokemon=updated_pokemon_id).first()
+
+    # Verificar se o Pokémon foi atualizado corretamente
+    assert updated_pokemon is not None
+
+    # Fechar a sessão de teste
+    test_session.close()
+
+def test_find_by_name_pokemon():
+    """Should find a Pokemon in the Pokemon table by name."""
+
+    # Inserir um novo Pokémon
+    name_pokemon = faker.name()
+    attack_force = "Electric"
+    attack_value = faker.random_number(digits=3)
+    new_pokemon = pokemon_repository.insert(name_pokemon, attack_force, attack_value)
+
+    # Obter o engine e criar uma sessão separada para a consulta de teste
+    engine = db_connection_handler.get_engine()
+    test_session = Session(bind=engine)
+
+    # Adicionar o objeto new_pokemon à sessão de teste e sincronizar com o banco de dados
+    test_session.add(new_pokemon)
+    test_session.flush()
+
+    # Consultar o Pokémon inserido pelo nome
+    found_pokemon = pokemon_repository.find_by_name(new_pokemon.name_pokemon)
+
+    # Verificar se o Pokémon foi encontrado corretamente pelo nome
+    assert found_pokemon is not None
+    assert found_pokemon.name_pokemon == new_pokemon.name_pokemon
+    assert found_pokemon.attack_force == new_pokemon.attack_force
+    assert found_pokemon.attack_value == new_pokemon.attack_value
+
+    # Remover o Pokémon inserido para limpar o banco de dados
+    test_session.delete(new_pokemon)
+    test_session.commit()

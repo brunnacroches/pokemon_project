@@ -1,17 +1,15 @@
 from src.validators.validate_register_pokemon import validate_register_pokemon_request_body
-from pokemon_project.src.validators.validate_register_pokemon import validate_register_pokemon_request_body
-from src.error_handling.validation_error import ValidationError
+from src.validators.validate_register_pokemon import validate_register_pokemon_request_body
+from src.error_handling.validation_error_view import ViewError
 
 class RegisterPokemonViews:
     def __init__(self, controller) -> None:
         self.__controller = controller
-    
+
     def register_pokemon_view(self, request):
         try:
-            validation_response = validate_register_pokemon_request_body(request.json)
-            if not validation_response["is_valid"]:
-                raise ValidationError("Invalid request body", validation_response["error"])
-            
+            validate_register_pokemon_request_body(request.json)
+
             body = request.json
             name_pokemon = body["name_pokemon"]
             attack_force = body["attack_force"]
@@ -29,9 +27,8 @@ class RegisterPokemonViews:
                 },
                 "success": True
             }
-            
 
-        except Exception as e:
-            # Registre o erro e retorne um dicionário com uma mensagem de erro e um código de status de erro
-            print(f"Erro ao registrar o Pokemon: {e}")
-            return {"data": {"error": "Ocorreu um erro ao registrar o Pokemon."}, "status_code": 500}
+        except Exception as exception:
+            # Envia a exceção para a função de tratamento de erros
+            response = ViewError.handler_error(exception, error_type="register")
+            return response

@@ -30,3 +30,14 @@ mentorado
 - Serão tomados como elementos avaliativos toda a resolução do problema em conjunto com o
 modo arquitetural proposto. Além disso, a disposição de código limpo e comitagem serão levados
 em conta
+
+# Validacao dos dados
+
+- validar valores
+- validar se o nome nao foi encontrado
+- validadar de o model e invalido
+- validar se e nulo os inputs
+- validar as entradas
+- validar se os valores sao nulos
+- validar se tem espaco nos inputs
+- validar insensitive iputs
