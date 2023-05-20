@@ -1,5 +1,4 @@
 from src.validators.validate_register_pokemon import validate_register_pokemon_request_body
-from src.validators.validate_register_pokemon import validate_register_pokemon_request_body
 from src.error_handling.validation_error_view import ViewError
 
 class RegisterPokemonViews:

@@ -19,7 +19,7 @@ class PokemonRepository:
             except Exception as exception:
                 db.session.rollback()
                 raise exception
-
+ 
     def select(self):
         with self._connectionHandler() as db:
             try:

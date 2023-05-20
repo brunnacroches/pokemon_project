@@ -1,7 +1,7 @@
 from src.error_handling.validation_error import ValidationError
 import traceback
 
-# Defininco a classe de exeção personalizada ViewError
+# Definindo a classe de exeção personalizada ViewError
 class ViewError(Exception):
     # Construtor da classe ViewError
     def __init__(self, message, errors=None) -> None:

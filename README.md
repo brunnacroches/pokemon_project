@@ -1,37 +1,41 @@
-Exercício N°7:
+# Meu Projeto Backend
 
-Exercise N°7: - Build an API using the Flask framework to calculate the battle between Pokemons. Such API must have the following functionalities: * Register a pokemon by: Name and AttackForce (METHOD POST) - Search for two pokemons in the bank and calculate the result (METHOD GET) Obs.: It is necessary to use the architecture pattern presented in the project of example
+Meu Projeto Backend é uma aplicação Python para [descreva brevemente o propósito e as principais funcionalidades do projeto].
 
-battle_pokemons
+## Requisitos
 
-- Monte uma API utilizando a framework Flask que realize o calculo da batalha entre
-Pokemons. Tal API deve possuir as seguintes funcionalidades:
+- Python 3.7 ou superior
+- [Liste outras dependências ou requisitos, se aplicável]
 
-- Cadastrar um pokemon por: Nome e ForcaDeAtaque (METHOD POST)
+## Instalação
 
-- Buscar dois pokemons no banco e calcular o resultado (METHOD GET)
-Obs.: É necessário a utilização do padrão de arquitetura apresentado no projeto de exemplo
-apresentado (api). É NECESSÁRIO A CRIAÇÃO DE UMA PASTA COM VALIDADORES E
-TRATAMENTO DE ERROS
+Clone o repositório e instale as dependências:
 
-- Observações importantes!
+```bash
+git clone https://github.com/seu_usuario/meu_projeto_backend.git
+cd meu_projeto_backend
+pip install -r requirements.txt
 
-- O projeto deve ser salvo e armazenado em um repositório no GitHub
+## Estrutura do Projeto
+├── backend
+│   ├── app.py               # Arquivo principal da aplicação
+│   ├── requirements.txt     # Lista de dependências do projeto
+│   ├── src                  # Código-fonte do projeto
+│   │   ├── __init__.py
+│   │   ├── controllers      # Lógica de negócios e manipulação de dados
+│   │   ├── error_handling   # Manipulação de erros e exceções
+│   │   ├── infra            # Camada de infraestrutura (ex. banco de dados, serviços externos)
+│   │   ├── validators       # Validação de dados e entrada do usuário
+│   │   └── views            # Camada de apresentação e interação com o usuário (ex. API, templates)
 
-- Deixe os arquivos necessários (.sql) no projeto se necessário
-- O projeto deve possuir interação HTTP em Flask.
-- A arquitetura proposta fica sendo baseada no projeto de exemplo.
-- É necessario a presença de testes unitários, entretanto tal processo fica a critério do
-mentorado
-- É necessário a utilização de POO para tal sistema.
 
-- Sobre a avaliação:
+## Uso
+[Forneça informações e exemplos sobre como usar o projeto, incluindo como executá-lo, interagir com ele e estender ou modificar seu comportamento.]
 
-- Serão tomados como elementos avaliativos toda a resolução do problema em conjunto com o
-modo arquitetural proposto. Além disso, a disposição de código limpo e comitagem serão levados
-em conta
+## Testes
+[Explique como executar testes para o projeto, se aplicável.]
 
-# Validacao dos dados
+## Validacao dos dados
 
 - validar valores
 - validar se o nome nao foi encontrado
@@ -41,3 +45,15 @@ em conta
 - validar se os valores sao nulos
 - validar se tem espaco nos inputs
 - validar insensitive iputs
+
+## Contribuindo
+Se você gostaria de contribuir com o projeto, siga estas etapas:
+
+Faça um fork do repositório.
+Crie uma branch com suas mudanças.
+Faça um commit das suas alterações.
+Abra um Pull Request para que suas mudanças sejam revisadas e possivelmente mescladas ao projeto principal.
+
+## Licença:
+
+Este exemplo de README.md cobre as informações básicas sobre a estrutura do projeto e seu uso. Conforme mencionado anteriormente, você pode adicionar mais detalhes e explicações sobre as funções e classes específicas no projeto, bem como exemplos, documentação da API e tutoriais, conforme necessário.
